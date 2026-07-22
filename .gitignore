@@ -1,0 +1,30 @@
+﻿# Python environment and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.gradio/
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Training checkpoints and model weights
+checkpoints/
+fine_tuned_transformer/
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Large or generated project outputs
+final_error_analysis.csv
+consumer_complaint_transformer_final_60k.zip
+consumer_complaint_deployment.zip
+deployment_package/
+*.zip
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

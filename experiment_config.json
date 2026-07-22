@@ -1,0 +1,31 @@
+{
+  "experiment_type": "final_transformer_60k",
+  "seed": 42,
+  "modeling_rows": 60000,
+  "training_rows": 42000,
+  "validation_rows": 9000,
+  "test_rows": 9000,
+  "class_names": [
+    "credit_card",
+    "credit_reporting",
+    "debt_collection",
+    "mortgages_and_loans",
+    "retail_banking"
+  ],
+  "base_model": "distilbert-base-uncased",
+  "max_length": 192,
+  "epochs": 2,
+  "train_batch_size": 16,
+  "learning_rate": 2e-05,
+  "selection_basis": "Transformer won the controlled 15,999-row pilot comparison.",
+  "final_metrics": {
+    "accuracy": 0.8314444444444444,
+    "precision_macro": 0.8038717955335061,
+    "recall_macro": 0.8490634677764721,
+    "f1_macro": 0.8233194670621955,
+    "precision_weighted": 0.8427585429811046,
+    "recall_weighted": 0.8314444444444444,
+    "f1_weighted": 0.8333343691802363
+  },
+  "saved_model_path": "/kaggle/working/consumer_complaint_transformer_final_60k/fine_tuned_transformer"
+}
