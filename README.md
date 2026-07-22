@@ -1,183 +1,249 @@
-# Consumer Complaint Classifier — Local Gradio Application
+Consumer Complaint Classification
 
-This project launches the final DistilBERT complaint classifier on a Windows PC
-from TRAE or any terminal.
+A text-classification project for routing consumer complaints into the correct financial category.
 
-## Required folder layout
+The project began with a controlled comparison between recurrent neural networks and a pretrained Transformer. After the Transformer produced the strongest pilot results, it was retrained on a larger 60,000-record dataset and packaged in a local Gradio application.
 
-Extract the downloaded Kaggle file
-`consumer_complaint_transformer_final_60k.zip` into this project folder.
+Project overview
 
-The preferred layout is:
+The model classifies a written complaint into one of five categories:
 
-```text
-consumer_complaint_gradio_local/
+Credit reporting
+
+Debt collection
+
+Mortgages and loans
+
+Credit card
+
+Retail banking
+
+The repository includes the training workflow, evaluation results, and a local web interface for testing new complaints.
+
+Model development
+
+Pilot comparison
+
+Four models were trained and evaluated on the same 15,999-record sample:
+
+Model
+
+Accuracy
+
+Macro F1
+
+Transformer
+
+79.67%
+
+79.08%
+
+SimpleRNN
+
+77.21%
+
+74.62%
+
+LSTM
+
+76.17%
+
+74.61%
+
+GRU
+
+74.38%
+
+70.32%
+
+The Transformer achieved the best overall performance and was selected for the final stage.
+
+Final model
+
+The final DistilBERT classifier was trained on a stratified dataset of 60,000 complaints:
+
+Training: 42,000 records
+
+Validation: 9,000 records
+
+Test: 9,000 records
+
+Final test results:
+
+Metric
+
+Score
+
+Accuracy
+
+83.1%
+
+Macro F1
+
+82.3%
+
+Macro F1 was used as the main selection metric because the class distribution is imbalanced.
+
+Pipeline
+
+The training pipeline includes:
+
+Dataset loading and exploration
+
+Missing-value and duplicate removal
+
+Text normalization
+
+Stratified train, validation, and test splits
+
+Label encoding
+
+Class weighting
+
+DistilBERT fine-tuning
+
+Accuracy, precision, recall, and F1 evaluation
+
+Confusion matrix and error analysis
+
+Model export and local deployment
+
+Local application
+
+The project includes a Gradio interface that runs the trained model locally.
+
+The interface shows:
+
+Predicted complaint category
+
+Confidence score
+
+Probability distribution across all categories
+
+Inference details
+
+Example complaints
+
+Repository structure
+
+Consumer-Complaint-Classification/
 ├── app.py
 ├── requirements.txt
 ├── setup_windows.bat
 ├── run_app.bat
 ├── verify_setup.py
-├── experiment_config.json                 # from the Kaggle ZIP
-├── final_transformer_metrics.csv          # from the Kaggle ZIP
+├── experiment_config.json
+├── final_transformer_metrics.csv
+├── final_60k_class_distribution.csv
+├── label_encoder.joblib
+├── README.md
+└── notebooks/
+
+Large generated files are not stored in the normal Git history:
+
+.venv/
+
+checkpoints/
+
+fine_tuned_transformer/
+
+model weight files
+
+large ZIP archives
+
+Download the trained model
+
+The trained model is distributed separately because the weight file is larger than GitHub's regular file limit.
+
+Download the latest deployment package from:
+
+https://github.com/hazemtawfik0/Consumer-Complaint-Classification/releases/latest
+
+After downloading, extract the model into the project root so the folder structure contains:
+
+Consumer-Complaint-Classification/
 └── fine_tuned_transformer/
     ├── config.json
     ├── model.safetensors
     ├── tokenizer.json
     ├── tokenizer_config.json
-    ├── special_tokens_map.json
     └── vocab.txt
-```
 
-The application also searches subfolders automatically. The important folder is
-`fine_tuned_transformer`, which must contain the saved model and tokenizer.
+Run the application on Windows
 
-## Step 1 — Install Python
+1. Install Python
 
-Install **Python 3.11 64-bit**. During installation, enable the option to add
-Python to PATH.
+Python 3.11 64-bit is recommended.
 
-Confirm in a Windows terminal:
+Check the installation:
 
-```bat
 py -3.11 --version
-```
 
-## Step 2 — Open the project in TRAE
+2. Create the environment and install packages
 
-1. Open TRAE.
-2. Select **Open Folder**.
-3. Choose this project folder.
-4. Open **Terminal → New Terminal**.
+From the project folder:
 
-## Step 3 — Create the environment and install packages
-
-The easiest method is to run:
-
-```bat
-setup_windows.bat
-```
-
-From a TRAE PowerShell terminal, use:
-
-```powershell
 .\setup_windows.bat
-```
 
-The script creates `.venv` and installs Gradio, Transformers, PyTorch, and
-Safetensors.
+The script creates a local virtual environment and installs the required packages.
 
-Manual alternative:
+3. Verify the setup
 
-```powershell
+.\.venv\Scripts\python.exe verify_setup.py
+
+4. Start the application
+
+.\run_app.bat
+
+The interface will open at:
+
+http://127.0.0.1:7860
+
+Keep the terminal open while the application is running.
+
+Run manually
+
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-## Step 4 — Verify the setup
-
-```powershell
-.\.venv\Scripts\python.exe verify_setup.py
-```
-
-You should see package versions and a message showing that the model folder is
-ready.
-
-## Step 5 — Launch the application
-
-Run:
-
-```powershell
-.\run_app.bat
-```
-
-or:
-
-```powershell
 .\.venv\Scripts\python.exe app.py
-```
 
-The browser opens automatically at:
+Main libraries
 
-```text
-http://127.0.0.1:7860
-```
+Python
 
-Keep the terminal open while the application is running. Press `Ctrl+C` in the
-terminal to stop it.
+PyTorch
 
-## CPU and GPU
+Hugging Face Transformers
 
-The application runs on CPU automatically. When a compatible NVIDIA PyTorch
-installation is available, it automatically uses CUDA.
+scikit-learn
 
-To install an NVIDIA-enabled PyTorch build, use the command generated by the
-official PyTorch installation selector for your exact GPU/driver setup, then
-rerun the application.
+pandas
 
-Check the selected device in the application header or by running:
+Gradio
 
-```powershell
-.\.venv\Scripts\python.exe verify_setup.py
-```
+Notes
 
-## Open the app on other devices in the same network
+The confidence value shown by the application is the model's softmax output. It should be treated as a model score rather than a guarantee.
 
-By default, the server is private to this computer. To allow access from another
-device on the same trusted local network:
+The pilot comparison and the final 60,000-record experiment serve different purposes:
 
-```powershell
-$env:GRADIO_SERVER_NAME="0.0.0.0"
-.\.venv\Scripts\python.exe app.py
-```
+The pilot experiment provides the fair comparison between all four architectures.
 
-Windows Firewall may ask for permission. Do not expose the port to the public
-internet without authentication and proper deployment controls.
+The final experiment scales the selected Transformer to a larger dataset.
 
-## Change the port
+Future improvements
 
-```powershell
-$env:GRADIO_SERVER_PORT="7861"
-.\.venv\Scripts\python.exe app.py
-```
+Possible next steps include:
 
-## Specify the model folder manually
+Probability calibration
 
-```powershell
-$env:MODEL_DIR="D:\Models\fine_tuned_transformer"
-.\.venv\Scripts\python.exe app.py
-```
+Hyperparameter tuning
 
-## Common errors
+Longer input sequences
 
-### The trained model was not found
+Testing larger Transformer models
 
-Confirm that this file exists:
+Adding model monitoring and data-drift checks
 
-```text
-fine_tuned_transformer\model.safetensors
-```
-
-and that `config.json` and the tokenizer files are in the same folder.
-
-### Port 7860 is already in use
-
-Set another port:
-
-```powershell
-$env:GRADIO_SERVER_PORT="7861"
-.\.venv\Scripts\python.exe app.py
-```
-
-### PyTorch installation fails
-
-Use Python 3.11 64-bit and recreate `.venv`. For GPU use, obtain the exact
-installation command from the official PyTorch selector.
-
-### The browser does not open
-
-Open this address manually:
-
-```text
-http://127.0.0.1:7860
-```
+Deploying the application through Docker or Hugging Face Spaces
